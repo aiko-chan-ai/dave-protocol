@@ -1,6 +1,6 @@
 # Introduction
 
-This document details protocol version 1.0 of Discord’s audio/video end-to-end encryption (DAVE) protocol.
+This document details protocol version 1.1 of Discord’s audio/video end-to-end encryption (DAVE) protocol.
 
 Beginning September 2024, supporting Discord clients prefer to use end-to-end encryption for DM/GDM calls, server voice channels (excluding stage channels), and Go Live streams. In 2025 all official Discord clients will support the protocol and it will be an enforced requirement to connect to the end-to-end encryption eligible audio/video session types listed above.
 
@@ -233,7 +233,7 @@ Welcomed members directly receive the welcome message encrypted for their key pa
 
 Upon successful processing of a [dave_mls_welcome opcode (30)](#dave_mls_welcome-30) message, welcomed members report that they are ready for the associated transition by sending the [dave_protocol_ready_for_transition opcode (23)](#dave_protocol_ready_for_transition-23).
 
-Welcomed members are only able to decrypt media sent for epochs that they are a member of. Welcomed members may not be able to immediately decrypt in-flight media, since media senders will continue to use key ratchets from the previous epoch until the transition is executed via the [dave_protocol_execute_transition opcode (22)](#dave_protocol_execute_transition-22). 
+Welcomed members are only able to decrypt media sent for epochs that they are a member of. Welcomed members may not be able to immediately decrypt in-flight media, since media senders will continue to use key ratchets from the previous epoch until the transition is executed via the [dave_protocol_execute_transition opcode (22)](#dave_protocol_execute_transition-22).
 
 ## Member Remove
 
@@ -250,7 +250,7 @@ All group members follow the process described in [Proposal Handling](#proposal-
 
 During transition phases, media is still sent for the previous group's epoch until media senders receive the [dave_protocol_execute_transition opcode (22)](#dave_protocol_execute_transition-22). When the group completes a transition to the new epoch, removed members are no longer able to decrypt media sent in the next or any future epochs (unless they rejoin and become a member of the group again).
 
-This means that removed members can decrypt media sent immediately after they are removed from the group, for a period of time up to roughly two seconds (due to the voice gateway transition timeout and the latency between the voice gateway and clients). 
+This means that removed members can decrypt media sent immediately after they are removed from the group, for a period of time up to roughly two seconds (due to the voice gateway transition timeout and the latency between the voice gateway and clients).
 
 Though removed members may be able to decrypt media still being sent during the short transition period, they are no longer forwarded that media from the SFU. Discord first-party clients display all members of the media session as long as they remain connected to the voice gateway and may be receiving media from the SFU.
 
@@ -726,7 +726,7 @@ A given device may use either ephemeral or persistent signature keypairs.
 
 ### Ephemeral Signature Keypairs
 
-Ephemeral signature private keys (ESPrv) are not stored on device, and last maximally for the duration of a Discord session. 
+Ephemeral signature private keys (ESPrv) are not stored on device, and last maximally for the duration of a Discord session.
 
 A new ephemeral signature keypair is generated when joining a protocol call, as long as there are no active protocol media sessions. See [Consistency of Identity Keypairs](#consistency-of-identity-keypairs) for details.
 
@@ -800,6 +800,7 @@ Should persistent identity be unavailable for any of the above reasons, the clie
 ## Performing Verification
 
 A pair of users complete verification by:
+
 - manually comparing a displayable version of the pairwise fingerprint out-of-band
 - automatically comparing the full pairwise fingerprint by sharing a deeplink out-of-band
 
@@ -828,7 +829,7 @@ Determining the reason for the mismatch requires out-of-band confirmation from t
 
 If the verified user does not have a persistent public identity key, the completed verification must be stored ephemerally by the verifying user.
 
-The verified user's ephemeral key remains the same as long as they remain connected to the media session. A verifying user may leave and later re-join the same media session and see that the previously verified user is still verified (i.e. because the verified user remained connected to the media session with the same identity key). 
+The verified user's ephemeral key remains the same as long as they remain connected to the media session. A verifying user may leave and later re-join the same media session and see that the previously verified user is still verified (i.e. because the verified user remained connected to the media session with the same identity key).
 
 Any action which clears the memory of the verifying user's client (e.g. application relaunch) will remove all ephemeral verifications.
 
@@ -865,7 +866,6 @@ This opcode uses a JSON text representation, and is sent from the client to the 
   }
 }
 ```
-
 
 ## select_protocol_ack (4)
 
@@ -952,7 +952,7 @@ This opcode uses a JSON text representation, and includes the epoch ID and proto
     ...
     "protocol_version": 1,
     "epoch": 1
-  } 
+  }
 }
 ```
 
